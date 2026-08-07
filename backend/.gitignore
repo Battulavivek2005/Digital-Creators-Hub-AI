@@ -1,0 +1,28 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+.env/
+.venv/
+
+# Environment variables
+.env
+
+# SQLite database (optional)
+# Remove this line if you WANT the database in Git
+database/*.db
+
+# Uploads (optional)
+# Remove this line if you WANT uploaded images in Git
+uploads/
+
+# IDE
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
