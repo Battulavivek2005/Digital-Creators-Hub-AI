@@ -439,6 +439,7 @@ export function TestimonialsSection() {
             type: item.designation,
             quote: item.review,
             rating: item.rating,
+            image: item.image,
           }));
 
           setTestimonials(mappedTestimonials);
@@ -493,13 +494,21 @@ export function TestimonialsSection() {
 
               <div className="mt-5 flex items-center gap-3">
 
-                <div className="h-11 w-11 rounded-full bg-gradient-primary grid place-items-center text-white text-sm font-semibold shadow-glow">
-                  {t.name
-                    .split(" ")
-                    .map((x: string) => x[0])
-                    .slice(0, 2)
-                    .join("")}
-                </div>
+<div className="h-11 w-11 shrink-0 overflow-hidden rounded-full bg-gradient-primary grid place-items-center text-white text-sm font-semibold shadow-glow">
+  {t.image ? (
+    <img
+      src={t.image}
+      alt={t.name}
+      className="h-full w-full object-cover"
+    />
+  ) : (
+    t.name
+      .split(" ")
+      .map((x: string) => x[0])
+      .slice(0, 2)
+      .join("")
+  )}
+</div>
 
                 <div className="min-w-0">
 

@@ -1,7 +1,8 @@
 import os
 import uuid
-from flask import jsonify , current_app
-from werkzeug.utils import secure_filename
+
+from flask import jsonify, current_app, request
+
 from models.testimonial_model import (
     create_testimonial,
     get_all_testimonials,
@@ -105,6 +106,8 @@ def remove_testimonial(testimonial_id):
         "success": True,
         "message": "Testimonial deleted successfully."
     })
+
+
 def upload_testimonial_image(request):
     if "image" not in request.files:
         return jsonify({
@@ -120,6 +123,12 @@ def upload_testimonial_image(request):
             "message": "No image selected."
         }), 400
 
+    if "." not in image.filename:
+        return jsonify({
+            "success": False,
+            "message": "Invalid image file."
+        }), 400
+
     extension = image.filename.rsplit(".", 1)[1].lower()
 
     filename = f"{uuid.uuid4()}.{extension}"
@@ -131,8 +140,10 @@ def upload_testimonial_image(request):
 
     image.save(filepath)
 
+    image_url = f"{request.host_url.rstrip('/')}/uploads/{filename}"
+
     return jsonify({
         "success": True,
         "image": filename,
-        "image_url": f"http://127.0.0.1:5000/uploads/{filename}"
+        "image_url": image_url
     })

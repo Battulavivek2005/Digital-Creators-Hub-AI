@@ -1,8 +1,7 @@
 import os
 import uuid
-from werkzeug.utils import secure_filename
-from flask import current_app
-from flask import jsonify
+
+from flask import current_app, jsonify, request
 from models.portfolio_model import (
     create_portfolio,
     get_all_portfolios,
@@ -106,6 +105,8 @@ def remove_portfolio(portfolio_id):
         "success": True,
         "message": "Portfolio project deleted successfully."
     })
+
+
 def upload_portfolio_image(request):
     if "image" not in request.files:
         return jsonify({
@@ -121,13 +122,15 @@ def upload_portfolio_image(request):
             "message": "No image selected."
         }), 400
 
+    if "." not in image.filename:
+        return jsonify({
+            "success": False,
+            "message": "Invalid image file."
+        }), 400
+
     extension = image.filename.rsplit(".", 1)[1].lower()
 
-    filename = (
-        str(uuid.uuid4())
-        + "."
-        + extension
-    )
+    filename = f"{uuid.uuid4()}.{extension}"
 
     filepath = os.path.join(
         current_app.config["UPLOAD_FOLDER"],
@@ -136,8 +139,10 @@ def upload_portfolio_image(request):
 
     image.save(filepath)
 
+    image_url = f"{request.host_url.rstrip('/')}/uploads/{filename}"
+
     return jsonify({
         "success": True,
         "image": filename,
-        "image_url": f"http://127.0.0.1:5000/uploads/{filename}"
+        "image_url": image_url
     })
