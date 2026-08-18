@@ -12,31 +12,50 @@ from controllers.contact_controller import (
 contact_bp = Blueprint("contact", __name__)
 
 
-# Submit Contact Form
+# =========================================================
+# PUBLIC - Submit Contact Form
+# =========================================================
+
 @contact_bp.route("/", methods=["POST"])
 def create_contact_route():
     return submit_contact(request.json)
 
 
-# View All Contact Messages
+# =========================================================
+# ADMIN - View All Contact Messages
+# =========================================================
+
 @contact_bp.route("/", methods=["GET"])
+@jwt_required()
 def get_contacts_route():
     return view_contacts()
 
 
-# View Single Contact Message
+# =========================================================
+# ADMIN - View Single Contact Message
+# =========================================================
+
 @contact_bp.route("/<int:contact_id>", methods=["GET"])
+@jwt_required()
 def get_single_contact_route(contact_id):
     return view_single_contact(contact_id)
 
 
-# Update Contact Status
+# =========================================================
+# ADMIN - Update Contact Status
+# =========================================================
+
 @contact_bp.route("/<int:contact_id>", methods=["PUT"])
+@jwt_required()
 def update_contact_route(contact_id):
     return edit_contact_status(contact_id, request.json)
 
 
-# Delete Contact Message
+# =========================================================
+# ADMIN - Delete Contact Message
+# =========================================================
+
 @contact_bp.route("/<int:contact_id>", methods=["DELETE"])
+@jwt_required()
 def delete_contact_route(contact_id):
     return remove_contact(contact_id)
