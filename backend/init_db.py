@@ -1,54 +1,66 @@
-    import sqlite3
-    import bcrypt
-    from config import DATABASE_PATH
+import os
+import sqlite3
+import bcrypt
+
+from config import DATABASE_PATH
 
 
-    def initialize_database():
-        conn = sqlite3.connect(DATABASE_PATH)
-        cursor = conn.cursor()
+def initialize_database():
+    # Make sure the database directory exists
+    database_directory = os.path.dirname(DATABASE_PATH)
+    os.makedirs(database_directory, exist_ok=True)
 
-        # Read and execute schema
-        with open("schema.sql", "r", encoding="utf-8") as f:
-            conn.executescript(f.read())
+    # Connect to SQLite database
+    conn = sqlite3.connect(DATABASE_PATH)
+    cursor = conn.cursor()
 
-        # Default Admin Details
-        full_name = "Administrator"
-        email = "satish@digitalcreatorshub.com"
-        password = "satish@123"
+    # Read and execute schema
+    schema_path = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        "schema.sql"
+    )
 
-        # Hash Password
-        password_hash = bcrypt.hashpw(
-            password.encode("utf-8"),
-            bcrypt.gensalt()
-        ).decode("utf-8")
+    with open(schema_path, "r", encoding="utf-8") as f:
+        conn.executescript(f.read())
 
-        # Insert Default Admin
-        cursor.execute("""
-            INSERT INTO admin_users
-            (full_name, email, password_hash, role, is_active)
-            VALUES (?, ?, ?, ?, ?)
-        """, (
-            full_name,
-            email,
-            password_hash,
-            "admin",
-            1
-        ))
+    # Default Admin Details
+    full_name = "Administrator"
+    email = "satish@digitalcreatorshub.com"
+    password = "satish@123"
 
-        conn.commit()
-        conn.close()
+    # Hash Password
+    password_hash = bcrypt.hashpw(
+        password.encode("utf-8"),
+        bcrypt.gensalt()
+    ).decode("utf-8")
 
-        print("======================================")
-        print(" Digital Creators Hub Database Created ")
-        print("======================================")
-        print(f"Database Location: {DATABASE_PATH}")
-        print("All tables created successfully.")
-        print()
-        print("Default Admin Account")
-        print("-------------------------")
-        print(f"Email    : {email}")
-        print(f"Password : {password}")
+    # Insert Default Admin
+    cursor.execute("""
+        INSERT OR IGNORE INTO admin_users
+        (full_name, email, password_hash, role, is_active)
+        VALUES (?, ?, ?, ?, ?)
+    """, (
+        full_name,
+        email,
+        password_hash,
+        "admin",
+        1
+    ))
+
+    conn.commit()
+    conn.close()
+
+    print("======================================")
+    print(" Digital Creators Hub Database Created ")
+    print("======================================")
+    print(f"Database Location: {DATABASE_PATH}")
+    print("All tables created successfully.")
+    print()
+    print("Default Admin Account")
+    print("-------------------------")
+    print(f"Email    : {email}")
+    print("Password : [configured]")
 
 
-    if __name__ == "__main__":
-        initialize_database()
+if __name__ == "__main__":
+    initialize_database()
