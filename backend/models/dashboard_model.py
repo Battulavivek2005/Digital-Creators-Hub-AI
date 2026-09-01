@@ -5,20 +5,20 @@ def get_dashboard_counts():
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    cursor.execute("SELECT COUNT(*) FROM admin_users")
-    admins = cursor.fetchone()[0]
+    cursor.execute("SELECT COUNT(*) AS count FROM admin_users")
+    admins = cursor.fetchone()["count"]
 
-    cursor.execute("SELECT COUNT(*) FROM services")
-    services = cursor.fetchone()[0]
+    cursor.execute("SELECT COUNT(*) AS count FROM services")
+    services = cursor.fetchone()["count"]
 
-    cursor.execute("SELECT COUNT(*) FROM portfolio")
-    portfolio = cursor.fetchone()[0]
+    cursor.execute("SELECT COUNT(*) AS count FROM portfolio")
+    portfolio = cursor.fetchone()["count"]
 
-    cursor.execute("SELECT COUNT(*) FROM testimonials")
-    testimonials = cursor.fetchone()[0]
+    cursor.execute("SELECT COUNT(*) AS count FROM testimonials")
+    testimonials = cursor.fetchone()["count"]
 
-    cursor.execute("SELECT COUNT(*) FROM contact_messages")
-    contacts = cursor.fetchone()[0]
+    cursor.execute("SELECT COUNT(*) AS count FROM contact_messages")
+    contacts = cursor.fetchone()["count"]
 
     conn.close()
 

@@ -7,7 +7,7 @@ def create_service(title, description, icon, image):
 
     cursor.execute("""
         INSERT INTO services(title, description, icon, image)
-        VALUES (?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s)
     """, (title, description, icon, image))
 
     conn.commit()
@@ -23,10 +23,10 @@ def get_all_services():
         ORDER BY id DESC
     """)
 
-    services = [dict(row) for row in cursor.fetchall()]
+    services = cursor.fetchall()
     conn.close()
 
-    return services
+    return [dict(row) for row in services]
 
 
 def get_service_by_id(service_id):
@@ -34,7 +34,7 @@ def get_service_by_id(service_id):
     cursor = conn.cursor()
 
     cursor.execute(
-        "SELECT * FROM services WHERE id=?",
+        "SELECT * FROM services WHERE id=%s",
         (service_id,)
     )
 
@@ -50,12 +50,12 @@ def update_service(service_id, title, description, icon, image, status):
 
     cursor.execute("""
         UPDATE services
-        SET title=?,
-            description=?,
-            icon=?,
-            image=?,
-            status=?
-        WHERE id=?
+        SET title=%s,
+            description=%s,
+            icon=%s,
+            image=%s,
+            status=%s
+        WHERE id=%s
     """, (
         title,
         description,
@@ -74,7 +74,7 @@ def delete_service(service_id):
     cursor = conn.cursor()
 
     cursor.execute(
-        "DELETE FROM services WHERE id=?",
+        "DELETE FROM services WHERE id=%s",
         (service_id,)
     )
 

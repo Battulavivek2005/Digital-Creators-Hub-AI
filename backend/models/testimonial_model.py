@@ -1,14 +1,21 @@
 from models.db import get_db_connection
 
 
-def create_testimonial(client_name, company, designation, review, rating, image):
+def create_testimonial(
+    client_name,
+    company,
+    designation,
+    review,
+    rating,
+    image
+):
     conn = get_db_connection()
     cursor = conn.cursor()
 
     cursor.execute("""
         INSERT INTO testimonials
         (client_name, company, designation, review, rating, image)
-        VALUES (?, ?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s, %s)
     """, (
         client_name,
         company,
@@ -31,10 +38,10 @@ def get_all_testimonials():
         ORDER BY id DESC
     """)
 
-    testimonials = [dict(row) for row in cursor.fetchall()]
+    testimonials = cursor.fetchall()
     conn.close()
 
-    return testimonials
+    return [dict(row) for row in testimonials]
 
 
 def get_testimonial_by_id(testimonial_id):
@@ -42,7 +49,7 @@ def get_testimonial_by_id(testimonial_id):
     cursor = conn.cursor()
 
     cursor.execute(
-        "SELECT * FROM testimonials WHERE id=?",
+        "SELECT * FROM testimonials WHERE id=%s",
         (testimonial_id,)
     )
 
@@ -67,14 +74,14 @@ def update_testimonial(
 
     cursor.execute("""
         UPDATE testimonials
-        SET client_name=?,
-            company=?,
-            designation=?,
-            review=?,
-            rating=?,
-            image=?,
-            status=?
-        WHERE id=?
+        SET client_name=%s,
+            company=%s,
+            designation=%s,
+            review=%s,
+            rating=%s,
+            image=%s,
+            status=%s
+        WHERE id=%s
     """, (
         client_name,
         company,
@@ -95,7 +102,7 @@ def delete_testimonial(testimonial_id):
     cursor = conn.cursor()
 
     cursor.execute(
-        "DELETE FROM testimonials WHERE id=?",
+        "DELETE FROM testimonials WHERE id=%s",
         (testimonial_id,)
     )
 

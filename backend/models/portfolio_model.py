@@ -1,14 +1,21 @@
 from models.db import get_db_connection
 
 
-def create_portfolio(title, description, category, image, project_url, featured):
+def create_portfolio(
+    title,
+    description,
+    category,
+    image,
+    project_url,
+    featured
+):
     conn = get_db_connection()
     cursor = conn.cursor()
 
     cursor.execute("""
         INSERT INTO portfolio
         (title, description, category, image, project_url, featured)
-        VALUES (?, ?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s, %s)
     """, (
         title,
         description,
@@ -31,10 +38,10 @@ def get_all_portfolios():
         ORDER BY id DESC
     """)
 
-    portfolios = [dict(row) for row in cursor.fetchall()]
+    portfolios = cursor.fetchall()
     conn.close()
 
-    return portfolios
+    return [dict(row) for row in portfolios]
 
 
 def get_portfolio_by_id(portfolio_id):
@@ -42,7 +49,7 @@ def get_portfolio_by_id(portfolio_id):
     cursor = conn.cursor()
 
     cursor.execute(
-        "SELECT * FROM portfolio WHERE id=?",
+        "SELECT * FROM portfolio WHERE id=%s",
         (portfolio_id,)
     )
 
@@ -67,14 +74,14 @@ def update_portfolio(
 
     cursor.execute("""
         UPDATE portfolio
-        SET title=?,
-            description=?,
-            category=?,
-            image=?,
-            project_url=?,
-            featured=?,
-            status=?
-        WHERE id=?
+        SET title=%s,
+            description=%s,
+            category=%s,
+            image=%s,
+            project_url=%s,
+            featured=%s,
+            status=%s
+        WHERE id=%s
     """, (
         title,
         description,
@@ -95,7 +102,7 @@ def delete_portfolio(portfolio_id):
     cursor = conn.cursor()
 
     cursor.execute(
-        "DELETE FROM portfolio WHERE id=?",
+        "DELETE FROM portfolio WHERE id=%s",
         (portfolio_id,)
     )
 

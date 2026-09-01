@@ -3,12 +3,13 @@ from models.db import get_db_connection
 
 def create_admin(full_name, email, password_hash, role="admin"):
     conn = get_db_connection()
+    cursor = conn.cursor()
 
-    conn.execute(
+    cursor.execute(
         """
         INSERT INTO admin_users
         (full_name, email, password_hash, role)
-        VALUES (?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s)
         """,
         (full_name, email, password_hash, role),
     )
@@ -19,31 +20,37 @@ def create_admin(full_name, email, password_hash, role="admin"):
 
 def get_admin_by_email(email):
     conn = get_db_connection()
+    cursor = conn.cursor()
 
-    admin = conn.execute(
+    cursor.execute(
         """
         SELECT * FROM admin_users
-        WHERE email = ?
+        WHERE email = %s
         """,
         (email,),
-    ).fetchone()
+    )
+
+    admin = cursor.fetchone()
 
     conn.close()
 
-    return admin
+    return dict(admin) if admin else None
 
 
 def get_all_admins():
     conn = get_db_connection()
+    cursor = conn.cursor()
 
-    admins = conn.execute(
+    cursor.execute(
         """
         SELECT id, full_name, email, role, is_active, created_at
         FROM admin_users
         ORDER BY id
         """
-    ).fetchall()
+    )
+
+    admins = cursor.fetchall()
 
     conn.close()
 
-    return admins
+    return [dict(admin) for admin in admins]

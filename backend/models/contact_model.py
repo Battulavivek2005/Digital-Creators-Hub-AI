@@ -8,7 +8,7 @@ def create_contact(name, email, phone, subject, message):
     cursor.execute("""
         INSERT INTO contact_messages
         (name, email, phone, subject, message)
-        VALUES (?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s)
     """, (
         name,
         email,
@@ -30,10 +30,10 @@ def get_all_contacts():
         ORDER BY id DESC
     """)
 
-    contacts = [dict(row) for row in cursor.fetchall()]
+    contacts = cursor.fetchall()
     conn.close()
 
-    return contacts
+    return [dict(row) for row in contacts]
 
 
 def get_contact_by_id(contact_id):
@@ -41,7 +41,7 @@ def get_contact_by_id(contact_id):
     cursor = conn.cursor()
 
     cursor.execute(
-        "SELECT * FROM contact_messages WHERE id=?",
+        "SELECT * FROM contact_messages WHERE id=%s",
         (contact_id,)
     )
 
@@ -57,8 +57,8 @@ def update_contact_status(contact_id, status):
 
     cursor.execute("""
         UPDATE contact_messages
-        SET status=?
-        WHERE id=?
+        SET status=%s
+        WHERE id=%s
     """, (
         status,
         contact_id
@@ -73,7 +73,7 @@ def delete_contact(contact_id):
     cursor = conn.cursor()
 
     cursor.execute(
-        "DELETE FROM contact_messages WHERE id=?",
+        "DELETE FROM contact_messages WHERE id=%s",
         (contact_id,)
     )
 
